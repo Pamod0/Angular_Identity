@@ -43,7 +43,7 @@ const AUTH_CONSTANTS = {
   },
   API_ENDPOINTS: {
     LOGIN: '/login',
-    REGISTER: '/register',
+    REGISTER: 'auth/register',
     REFRESH: '/refresh',
     LOGOUT: '/logout',
   },
@@ -75,7 +75,7 @@ export class AuthService {
    */
   register(registerData: RegisterRequest): Observable<any> {
     return this.http
-      .post<any>(`${this.apiUrl}${AUTH_CONSTANTS.API_ENDPOINTS.REGISTER}`, registerData)
+      .post<any>(`${this.apiUrl}/${AUTH_CONSTANTS.API_ENDPOINTS.REGISTER}`, registerData)
       .pipe(catchError(this.handleError));
   }
 
