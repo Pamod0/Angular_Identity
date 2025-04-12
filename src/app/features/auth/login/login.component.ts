@@ -93,7 +93,7 @@ export class LoginComponent implements OnInit, OnDestroy {
           this.router.navigate(['/admin']);
         }),
         catchError((error: AuthErrorResponse) => {
-          const errorMessage = error?.error?.message || VALIDATION.MESSAGES.LOGIN_FAILED;
+          const errorMessage = error?.message || VALIDATION.MESSAGES.LOGIN_FAILED;
           this.snackBar.open(errorMessage, 'Close', {
             duration: VALIDATION.SNACKBAR_DURATION,
           });

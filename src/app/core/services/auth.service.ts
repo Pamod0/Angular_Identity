@@ -42,7 +42,7 @@ const AUTH_CONSTANTS = {
     USER_DATA: 'user-data',
   },
   API_ENDPOINTS: {
-    LOGIN: '/login',
+    LOGIN: 'auth/login',
     REGISTER: 'auth/register',
     REFRESH: '/refresh',
     LOGOUT: '/logout',
@@ -124,11 +124,24 @@ export class AuthService {
    * @param password User password
    * @returns Observable with login response
    */
+  // login(email: string, password: string): Observable<AuthResponse> {
+  //   const loginRequest: LoginRequest = { email, password };
+
+  //   return this.http
+  //     .post<AuthResponse>(`${this.apiUrl}${AUTH_CONSTANTS.API_ENDPOINTS.LOGIN}`, loginRequest)
+  //     .pipe(
+  //       tap((response: AuthResponse) => {
+  //         this.storeAuthData(response);
+  //         this.isLoggedInSubject.next(true);
+  //       }),
+  //       catchError(this.handleError),
+  //     );
+  // }
   login(email: string, password: string): Observable<AuthResponse> {
     const loginRequest: LoginRequest = { email, password };
 
     return this.http
-      .post<AuthResponse>(`${this.apiUrl}${AUTH_CONSTANTS.API_ENDPOINTS.LOGIN}`, loginRequest)
+      .post<any>(`${this.apiUrl}/${AUTH_CONSTANTS.API_ENDPOINTS.LOGIN}`, loginRequest)
       .pipe(
         tap((response: AuthResponse) => {
           this.storeAuthData(response);
