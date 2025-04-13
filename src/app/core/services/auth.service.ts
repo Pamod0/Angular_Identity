@@ -3,6 +3,7 @@ import { Injectable, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { BehaviorSubject, Observable, catchError, tap, throwError } from 'rxjs';
 import { environment } from '../../../environments/environment';
+import { EmailConfirmationRequest, ResendConfirmationEmailRequest } from '../models/auth.model';
 
 // Interfaces moved to separate model file and imported back
 export interface RegisterRequest {
@@ -80,63 +81,11 @@ export class AuthService {
   }
 
   /**
-   * Handle HTTP errors
-   * @param error HttpErrorResponse object
-   * @returns Observable that throws an error
-   */
-  private handleError(error: HttpErrorResponse) {
-    let errorMessage = 'An unknown error occurred';
-
-    if (error.error instanceof ErrorEvent) {
-      // Client-side error
-      errorMessage = `Error: ${error.error.message}`;
-    } else {
-      // Server-side error
-      if (error.error && typeof error.error === 'object') {
-        if (error.error.errors) {
-          // Handle validation errors from ASP.NET Core Identity
-          const validationErrors = error.error.errors;
-          const errorMessages: string[] = [];
-
-          for (const key in validationErrors) {
-            if (Object.prototype.hasOwnProperty.call(validationErrors, key)) {
-              errorMessages.push(...validationErrors[key]);
-            }
-          }
-
-          if (errorMessages.length > 0) {
-            errorMessage = errorMessages.join(' ');
-          }
-        } else if (error.error.message) {
-          errorMessage = error.error.message;
-        }
-      } else if (typeof error.error === 'string') {
-        errorMessage = error.error;
-      }
-    }
-
-    return throwError(() => new Error(errorMessage));
-  }
-
-  /**
    * Authenticate user with email and password
    * @param email User email
    * @param password User password
    * @returns Observable with login response
    */
-  // login(email: string, password: string): Observable<AuthResponse> {
-  //   const loginRequest: LoginRequest = { email, password };
-
-  //   return this.http
-  //     .post<AuthResponse>(`${this.apiUrl}${AUTH_CONSTANTS.API_ENDPOINTS.LOGIN}`, loginRequest)
-  //     .pipe(
-  //       tap((response: AuthResponse) => {
-  //         this.storeAuthData(response);
-  //         this.isLoggedInSubject.next(true);
-  //       }),
-  //       catchError(this.handleError),
-  //     );
-  // }
   login(email: string, password: string): Observable<AuthResponse> {
     const loginRequest: LoginRequest = { email, password };
 
@@ -226,5 +175,62 @@ export class AuthService {
   getUserData(): { userId: string; email: string; expiration: string } | null {
     const userData = localStorage.getItem(AUTH_CONSTANTS.STORAGE_KEYS.USER_DATA);
     return userData ? JSON.parse(userData) : null;
+  }
+
+  confirmEmail(
+    request: EmailConfirmationRequest,
+  ): Observable<{ message: string; success: boolean }> {
+    return this.http.post<{ message: string; success: boolean }>(
+      `${this.apiUrl}/auth/ConfirmEmail`,
+      request,
+    );
+  }
+
+  resendConfirmationEmail(
+    request: ResendConfirmationEmailRequest,
+  ): Observable<{ message: string; success: boolean }> {
+    return this.http.post<{ message: string; success: boolean }>(
+      `${this.apiUrl}/auth/ResendConfirmationEmail`,
+      request,
+    );
+  }
+
+  /**
+   * Handle HTTP errors
+   * @param error HttpErrorResponse object
+   * @returns Observable that throws an error
+   */
+  private handleError(error: HttpErrorResponse) {
+    let errorMessage = 'An unknown error occurred';
+
+    if (error.error instanceof ErrorEvent) {
+      // Client-side error
+      errorMessage = `Error: ${error.error.message}`;
+    } else {
+      // Server-side error
+      if (error.error && typeof error.error === 'object') {
+        if (error.error.errors) {
+          // Handle validation errors from ASP.NET Core Identity
+          const validationErrors = error.error.errors;
+          const errorMessages: string[] = [];
+
+          for (const key in validationErrors) {
+            if (Object.prototype.hasOwnProperty.call(validationErrors, key)) {
+              errorMessages.push(...validationErrors[key]);
+            }
+          }
+
+          if (errorMessages.length > 0) {
+            errorMessage = errorMessages.join(' ');
+          }
+        } else if (error.error.message) {
+          errorMessage = error.error.message;
+        }
+      } else if (typeof error.error === 'string') {
+        errorMessage = error.error;
+      }
+    }
+
+    return throwError(() => new Error(errorMessage));
   }
 }

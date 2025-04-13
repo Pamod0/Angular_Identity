@@ -1,0 +1,25 @@
+<mat-card class="confirmation-card">
+  <mat-card-header>
+    <mat-card-title>Email Confirmation</mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <div *ngIf="isLoading" class="loading-container">
+      <mat-spinner diameter="50"></mat-spinner>
+      <p>Confirming your email...</p>
+    </div>
+
+    <div *ngIf="errorMessage" class="error-container">
+      <mat-icon color="warn">error_outline</mat-icon>
+      <p>{{ errorMessage }}</p>
+      <div class="resend-confirmation-link">
+        <p>Didn't receive confirmation email?</p>
+      </div>
+      <button mat-raised-button color="primary" routerLink="/resend-confirmation">Resend Confirmation Email</button>
+    </div>
+
+    <div *ngIf="isSuccess" class="success-container">
+      <mat-icon color="primary">check_circle_outline</mat-icon>
+      <p>Email confirmed successfully! Redirecting to login page...</p>
+    </div>
+  </mat-card-content>
+</mat-card>

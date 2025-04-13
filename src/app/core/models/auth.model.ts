@@ -19,3 +19,17 @@ export interface AuthResponse {
   };
   expiresIn?: number;
 }
+
+export interface EmailConfirmationRequest {
+  userId: string;
+  token: string;
+}
+
+export interface ResendConfirmationEmailRequest {
+  email: string;
+}
+
+export interface AuthResponse {
+  message: string;
+  success: boolean;
+}

@@ -1,0 +1,40 @@
+.confirmation-card {
+  max-width: 500px;
+  margin: 2rem auto;
+  padding: 2rem;
+  text-align: center;
+
+  .loading-container,
+  .error-container,
+  .success-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+
+    mat-icon {
+      font-size: 48px;
+      width: 48px;
+      height: 48px;
+    }
+  }
+
+  .error-container {
+    color: #f44336;
+  }
+
+  .success-container {
+    color: #4caf50;
+  }
+
+  .resend-confirmation-link {
+    color: black;
+    text-align: center;
+    margin-top: 1rem;
+    
+    p {
+      margin-bottom: 0.5rem;
+    }
+  }
+}

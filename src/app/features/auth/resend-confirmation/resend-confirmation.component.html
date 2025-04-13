@@ -1,0 +1,29 @@
+<mat-card class="resend-card">
+  <mat-card-header>
+    <mat-card-title>Resend Confirmation Email</mat-card-title>
+    <mat-card-subtitle>Enter your email address to receive a new confirmation link</mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content>
+    <form [formGroup]="resendForm" (ngSubmit)="onSubmit()">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Email</mat-label>
+        <input matInput formControlName="email" type="email" required />
+        <mat-icon matSuffix>email</mat-icon>
+        <mat-error *ngIf="resendForm.get('email')?.hasError('required')"> Email is required </mat-error>
+        <mat-error *ngIf="resendForm.get('email')?.hasError('email')"> Please enter a valid email address </mat-error>
+      </mat-form-field>
+
+      <div class="button-container">
+        <button mat-raised-button color="primary" type="submit" [disabled]="resendForm.invalid || isLoading">
+          <span *ngIf="!isLoading">Resend Confirmation Email</span>
+          <mat-spinner *ngIf="isLoading" diameter="20"></mat-spinner>
+        </button>
+      </div>
+
+      <div *ngIf="isEmailSent" class="success-message">
+        <mat-icon color="primary">check_circle_outline</mat-icon>
+        <p>Confirmation email sent. Please check your inbox.</p>
+      </div>
+    </form>
+  </mat-card-content>
+</mat-card>
