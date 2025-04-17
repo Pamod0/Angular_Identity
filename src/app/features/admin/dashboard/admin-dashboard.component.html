@@ -1,1 +1,165 @@
-<p>admin-dashboard works!</p>
+<div class="layout-container" [class.dark-theme]="isDarkTheme">
+  <mat-toolbar class="toolbar" [class.collapsed]="isCollapsed" [class.dark-theme]="isDarkTheme">
+    <div class="toolbar-left">
+      <button mat-icon-button (click)="toggleSidenav()" *ngIf="isMobile" class="menu-toggle" matTooltip="Toggle Menu">
+        <mat-icon>menu</mat-icon>
+      </button>
+      <button
+        mat-icon-button
+        (click)="toggleSidenavCollapse()"
+        *ngIf="!isMobile"
+        class="menu-toggle"
+        [matTooltip]="isCollapsed ? 'Expand Menu' : 'Collapse Menu'"
+      >
+        <mat-icon>{{ isCollapsed ? 'menu_open' : 'menu' }}</mat-icon>
+      </button>
+      <div class="toolbar-brand">
+        <!-- <span class="toolbar-title">IdentiCore</span>
+          <span class="toolbar-subtitle">Dashboard</span> -->
+        <img class="logo" src="/images/logo-11.png" alt="" />
+      </div>
+    </div>
+
+    <div class="toolbar-search" *ngIf="!isMobile">
+      <mat-icon>search</mat-icon>
+      <input type="text" placeholder="Search..." class="search-input" />
+    </div>
+
+    <div class="toolbar-actions">
+      <button mat-icon-button class="action-button" matTooltip="Toggle Theme" (click)="toggleTheme()">
+        <mat-icon>{{ isDarkTheme ? 'light_mode' : 'dark_mode' }}</mat-icon>
+      </button>
+
+      <button mat-icon-button class="action-button" matTooltip="Notifications">
+        <mat-icon
+          [matBadge]="getTotalNotifications()"
+          matBadgeColor="accent"
+          [matBadgeHidden]="getTotalNotifications() === 0"
+          >notifications</mat-icon
+        >
+      </button>
+
+      <button mat-icon-button class="action-button" matTooltip="Messages">
+        <mat-icon matBadge="2" matBadgeColor="accent">chat</mat-icon>
+      </button>
+
+      <div class="user-profile">
+        <button mat-button [matMenuTriggerFor]="userMenu" class="user-button">
+          <div class="avatar">JD</div>
+          <span class="username-text" *ngIf="!isMobile">John Doe</span>
+          <mat-icon class="dropdown-icon">expand_more</mat-icon>
+        </button>
+        <mat-menu #userMenu="matMenu" class="user-menu">
+          <div class="user-header">
+            <div class="avatar-large">JD</div>
+            <div class="user-info">
+              <div class="user-name">John Doe</div>
+              <div class="user-email">john.doeexample.com</div>
+            </div>
+          </div>
+          <mat-divider></mat-divider>
+          <button mat-menu-item>
+            <mat-icon>person</mat-icon>
+            <span>My Profile</span>
+          </button>
+          <button mat-menu-item>
+            <mat-icon>settings</mat-icon>
+            <span>Account Settings</span>
+          </button>
+          <button mat-menu-item>
+            <mat-icon>help</mat-icon>
+            <span>Help Center</span>
+          </button>
+          <mat-divider></mat-divider>
+          <button mat-menu-item class="logout-item">
+            <mat-icon>exit_to_app</mat-icon>
+            <span>Logout</span>
+          </button>
+        </mat-menu>
+      </div>
+    </div>
+  </mat-toolbar>
+
+  <mat-sidenav-container class="sidenav-container">
+    <mat-sidenav
+      #sidenav
+      [mode]="isMobile ? 'over' : 'side'"
+      [opened]="!isMobile"
+      class="sidenav"
+      [fixedInViewport]="isMobile"
+      [class.collapsed]="isCollapsed"
+      [class.dark-theme]="isDarkTheme"
+    >
+      <!-- <div class="sidenav-header" *ngIf="!isCollapsed">
+          <div class="logo-container">
+            <div class="logo-icon-wrapper">
+              <mat-icon class="logo-icon">speed</mat-icon>
+            </div>
+            <span class="logo-text">IdentiCore</span>
+          </div>
+        </div>
+        <div class="sidenav-icon-header" *ngIf="isCollapsed">
+          <div class="logo-icon-wrapper">
+            <mat-icon class="logo-icon">speed</mat-icon>
+          </div>
+        </div>
+  
+        <mat-divider></mat-divider> -->
+
+      <div class="menu-section">
+        <div class="menu-label" *ngIf="!isCollapsed">MAIN MENU</div>
+        <div class="nav-items">
+          <a
+            mat-ripple
+            *ngFor="let item of menuItems"
+            [routerLink]="item.route"
+            routerLinkActive="active-link"
+            (click)="closeSidenavOnMobile()"
+            class="nav-item"
+            [class.with-badge]="item.notifications > 0"
+            [matTooltip]="isCollapsed ? item.label : ''"
+            [matTooltipPosition]="'right'"
+            [class.tooltip-enabled]="isCollapsed"
+          >
+            <div class="nav-item-icon">
+              <mat-icon>{{ item.icon }}</mat-icon>
+            </div>
+            <span class="nav-item-label" *ngIf="!isCollapsed">{{ item.label }}</span>
+            <span class="nav-badge" *ngIf="item.notifications > 0">{{ item.notifications }}</span>
+          </a>
+        </div>
+      </div>
+
+      <mat-divider></mat-divider>
+
+      <div class="menu-section" *ngIf="!isCollapsed">
+        <div class="menu-label">RESOURCES</div>
+        <div class="nav-items">
+          <a mat-ripple class="nav-item">
+            <div class="nav-item-icon">
+              <mat-icon>help_outline</mat-icon>
+            </div>
+            <span class="nav-item-label">Help Center</span>
+          </a>
+          <a mat-ripple class="nav-item">
+            <div class="nav-item-icon">
+              <mat-icon>book</mat-icon>
+            </div>
+            <span class="nav-item-label">Documentation</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- sidenav-footer -->
+      <div class="sidenav-footer" *ngIf="!isCollapsed">
+        <div></div>
+      </div>
+    </mat-sidenav>
+
+    <mat-sidenav-content class="content" [class.dark-theme]="isDarkTheme">
+      <div class="content-container">
+        <router-outlet></router-outlet>
+      </div>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+</div>
