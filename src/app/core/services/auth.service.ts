@@ -5,12 +5,9 @@ import { BehaviorSubject, Observable, catchError, tap, throwError } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { EmailConfirmationRequest, ResendConfirmationEmailRequest } from '../models/auth.model';
 
-// Interfaces moved to separate model file and imported back
 export interface RegisterRequest {
   email: string;
   password: string;
-  // confirmPassword: string;
-  // fullName: string;
 }
 
 export interface LoginRequest {
@@ -58,7 +55,6 @@ export class AuthService {
   private isLoggedInSubject = new BehaviorSubject<boolean>(this.hasToken());
   public isLoggedIn$ = this.isLoggedInSubject.asObservable();
 
-  // Modern dependency injection
   private http = inject(HttpClient);
   private router = inject(Router);
 
