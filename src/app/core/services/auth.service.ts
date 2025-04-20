@@ -16,11 +16,11 @@ export interface LoginRequest {
 }
 
 export interface AuthResponse {
-  accessToken: string;
+  token: string;
   refreshToken: string;
   expiration: string;
   userId: string;
-  email: string;
+  roles: string[];
 }
 
 export interface RefreshTokenRequest {
@@ -101,13 +101,12 @@ export class AuthService {
    * @param response Auth response containing tokens
    */
   private storeAuthData(response: AuthResponse): void {
-    localStorage.setItem(AUTH_CONSTANTS.STORAGE_KEYS.TOKEN, response.accessToken);
+    localStorage.setItem(AUTH_CONSTANTS.STORAGE_KEYS.TOKEN, response.token);
     localStorage.setItem(AUTH_CONSTANTS.STORAGE_KEYS.REFRESH_TOKEN, response.refreshToken);
 
-    // Optionally store user data in a secure way
     const userData = {
       userId: response.userId,
-      email: response.email,
+      roles: response.roles,
       expiration: response.expiration,
     };
     localStorage.setItem(AUTH_CONSTANTS.STORAGE_KEYS.USER_DATA, JSON.stringify(userData));

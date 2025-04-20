@@ -1,5 +1,7 @@
-import { Component, ViewChild, HostListener } from '@angular/core';
+import { Component, ViewChild, HostListener, inject } from '@angular/core';
 import { RouterOutlet, RouterLink } from '@angular/router';
+
+import { AuthService } from '../../../core/services/auth.service';
 
 import { MatIconModule } from '@angular/material/icon';
 import { MatSidenavModule } from '@angular/material/sidenav';
@@ -50,6 +52,8 @@ export class AdminDashboardComponent {
     { icon: 'settings', label: 'Settings', route: '/settings', notifications: 0 },
   ];
 
+  private authService = inject(AuthService);
+
   constructor() {
     this.checkScreenSize();
     this.loadThemePreference();
@@ -99,5 +103,9 @@ export class AdminDashboardComponent {
 
   getTotalNotifications(): number {
     return this.menuItems.reduce((sum, item) => sum + item.notifications, 0);
+  }
+
+  logOut(): void {
+    this.authService.logout();
   }
 }
