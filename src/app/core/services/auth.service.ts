@@ -42,8 +42,8 @@ const AUTH_CONSTANTS = {
   API_ENDPOINTS: {
     LOGIN: 'auth/login',
     REGISTER: 'auth/register',
-    REFRESH: '/refresh',
-    LOGOUT: '/logout',
+    REFRESH: '/auth/refresh',
+    LOGOUT: '/auth/logout',
   },
 };
 
@@ -124,7 +124,7 @@ export class AuthService {
     localStorage.removeItem(AUTH_CONSTANTS.STORAGE_KEYS.REFRESH_TOKEN);
     localStorage.removeItem(AUTH_CONSTANTS.STORAGE_KEYS.USER_DATA);
     this.isLoggedInSubject.next(false);
-    this.router.navigate(['/login']);
+    this.router.navigate(['/auth/login']);
   }
 
   /**

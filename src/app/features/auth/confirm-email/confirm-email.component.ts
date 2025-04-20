@@ -51,7 +51,7 @@ export class ConfirmEmailComponent {
         this.snackBar.open('Email confirmed successfully! You can now log in.', 'Close', {
           duration: 5000,
         });
-        this.router.navigate(['/login']);
+        this.router.navigate(['/auth/login']);
       },
       error: (err) => {
         this.errorMessage =

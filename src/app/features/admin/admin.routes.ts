@@ -1,4 +1,9 @@
 import { Routes } from '@angular/router';
-import { AdminDashboardComponent } from './dashboard/admin-dashboard.component';
 
-export const ADMIN_ROUTES: Routes = [{ path: '', component: AdminDashboardComponent }];
+export const ADMIN_ROUTES: Routes = [
+  {
+    path: '',
+    loadComponent: () =>
+      import('./dashboard/admin-dashboard.component').then((m) => m.AdminDashboardComponent),
+  },
+];

@@ -127,7 +127,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
             panelClass: ['success-snackbar'],
           });
           this.resetForm();
-          this.router.navigate(['/login']);
+          this.router.navigate(['/auth/login']);
         }),
         catchError((error: AuthErrorResponse) => {
           if (error.message) {
