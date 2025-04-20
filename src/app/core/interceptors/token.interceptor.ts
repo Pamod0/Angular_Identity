@@ -12,7 +12,7 @@ import { catchError, switchMap, throwError } from 'rxjs';
 const AUTH_CONSTANTS = {
   UNAUTHORIZED: 401,
   FORBIDDEN: 403,
-  EXCLUDED_URLS: ['/login', '/register', '/refresh'],
+  EXCLUDED_URLS: ['/auth/login', '/auth/register', '/auth/refresh'],
 };
 
 /**
@@ -92,7 +92,7 @@ function handleUnauthorizedError(
     catchError((refreshError) => {
       // If refresh fails, log out the user and redirect to login
       authService.logout();
-      router.navigate(['/login'], {
+      router.navigate(['/auth/login'], {
         queryParams: {
           returnUrl: router.url,
           sessionExpired: 'true',

@@ -1,18 +1,11 @@
 import { Routes } from '@angular/router';
-import { LoginComponent } from './features/auth/login/login.component';
-import { RegisterComponent } from './features/auth/register/register.component';
 import { authGuard } from './core/guards/auth.guard';
-import { ConfirmEmailComponent } from './features/auth/confirm-email/confirm-email.component';
-import { ResendConfirmationComponent } from './features/auth/resend-confirmation/resend-confirmation.component';
 
 export const routes: Routes = [
-  { path: 'login', component: LoginComponent },
-
-  { path: 'register', component: RegisterComponent },
-
-  { path: 'confirm-email', component: ConfirmEmailComponent },
-
-  { path: 'resend-confirmation', component: ResendConfirmationComponent },
+  {
+    path: 'auth',
+    loadChildren: () => import('./features/auth/auth.routes').then((m) => m.AUTH_ROUTES),
+  },
 
   {
     path: 'admin',
@@ -20,5 +13,5 @@ export const routes: Routes = [
     canLoad: [authGuard],
   },
 
-  { path: '**', redirectTo: 'login' },
+  { path: '**', redirectTo: 'auth' },
 ];

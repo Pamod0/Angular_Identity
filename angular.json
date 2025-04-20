@@ -65,10 +65,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "EstoreApp:build:production"
+              "buildTarget": "IdentiCore:build:production"
             },
             "development": {
-              "buildTarget": "EstoreApp:build:development"
+              "buildTarget": "IdentiCore:build:development"
             }
           },
           "defaultConfiguration": "development"
