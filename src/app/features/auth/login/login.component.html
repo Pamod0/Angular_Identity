@@ -33,7 +33,10 @@
         </div>
 
         <div class="actions">
-          <button mat-raised-button color="primary" type="submit" class="full-width">Login</button>
+          <button mat-raised-button type="submit" class="login-btn full-width">
+            Login
+            <mat-spinner *ngIf="isLoading" diameter="20"></mat-spinner>
+          </button>
         </div>
 
         <div class="register">

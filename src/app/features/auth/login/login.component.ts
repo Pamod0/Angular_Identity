@@ -8,6 +8,7 @@ import {
 } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
+import { catchError, finalize, of, Subscription, tap } from 'rxjs';
 
 import { AuthService } from '../../../core/services/auth.service';
 import { AuthErrorResponse } from '../../../core/models/auth.model';
@@ -18,7 +19,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatIconModule } from '@angular/material/icon';
-import { catchError, finalize, of, Subscription, tap } from 'rxjs';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 
 const VALIDATION = {
   PASSWORD_MIN_LENGTH: 6,
@@ -45,6 +46,7 @@ const VALIDATION = {
     MatIconModule,
     CommonModule,
     RouterLink,
+    MatProgressSpinnerModule
   ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
