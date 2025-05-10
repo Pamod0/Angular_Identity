@@ -26,4 +26,9 @@ export const AUTH_ROUTES: Routes = [
         (m) => m.ResendConfirmationComponent,
       ),
   },
+  {
+    path: 'forgot-password',
+    loadComponent: () =>
+      import('./forgot-password/forgot-password.component').then((m) => m.ForgotPasswordComponent),
+  },
 ];
