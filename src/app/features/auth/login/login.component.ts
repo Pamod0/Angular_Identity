@@ -23,7 +23,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 const VALIDATION = {
   PASSWORD_MIN_LENGTH: 6,
-  SNACKBAR_DURATION: 3000,
+  SNACKBAR_DURATION: 5000,
   MESSAGES: {
     LOGIN_SUCCESS: 'Login successful!',
     LOGIN_FAILED: 'Login failed. Please try again.',

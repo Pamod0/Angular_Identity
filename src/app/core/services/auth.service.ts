@@ -5,6 +5,22 @@ import { BehaviorSubject, Observable, catchError, tap, throwError } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { EmailConfirmationRequest, ResendConfirmationEmailRequest } from '../models/auth.model';
 
+// Constants
+const AUTH_CONSTANTS = {
+  STORAGE_KEYS: {
+    TOKEN: 'auth-token',
+    REFRESH_TOKEN: 'refresh-token',
+    USER_DATA: 'user-data',
+  },
+  API_ENDPOINTS: {
+    LOGIN: 'auth/login',
+    REGISTER: 'auth/register',
+    REFRESH: '/auth/refresh',
+    LOGOUT: '/auth/logout',
+  },
+};
+
+// Interfaces
 export interface RegisterRequest {
   email: string;
   password: string;
@@ -32,56 +48,44 @@ export interface TokenResponse {
   refreshToken?: string;
 }
 
-// Constants for the service
-const AUTH_CONSTANTS = {
-  STORAGE_KEYS: {
-    TOKEN: 'auth-token',
-    REFRESH_TOKEN: 'refresh-token',
-    USER_DATA: 'user-data',
-  },
-  API_ENDPOINTS: {
-    LOGIN: 'auth/login',
-    REGISTER: 'auth/register',
-    REFRESH: '/auth/refresh',
-    LOGOUT: '/auth/logout',
-  },
-};
-
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
+  // Dependencies
+  private http = inject(HttpClient);
+  private router = inject(Router);
+
+  // Properties
   private apiUrl = environment.apiUrl || 'https://localhost:44369';
   private isLoggedInSubject = new BehaviorSubject<boolean>(this.hasToken());
   public isLoggedIn$ = this.isLoggedInSubject.asObservable();
 
-  private http = inject(HttpClient);
-  private router = inject(Router);
-
-  /**
-   * Checks if the user has a valid token stored
-   */
+  // Authentication state methods
   private hasToken(): boolean {
     return !!localStorage.getItem(AUTH_CONSTANTS.STORAGE_KEYS.TOKEN);
   }
 
-  /**
-   * Register a new user
-   * @param registerData User registration data
-   * @returns Observable with registration response
-   */
+  isAuthenticated(): boolean {
+    return this.hasToken();
+  }
+
+  getToken(): string | null {
+    return localStorage.getItem(AUTH_CONSTANTS.STORAGE_KEYS.TOKEN);
+  }
+
+  getUserData(): { userId: string; email: string; expiration: string } | null {
+    const userData = localStorage.getItem(AUTH_CONSTANTS.STORAGE_KEYS.USER_DATA);
+    return userData ? JSON.parse(userData) : null;
+  }
+
+  // Auth operations
   register(registerData: RegisterRequest): Observable<any> {
     return this.http
       .post<any>(`${this.apiUrl}/${AUTH_CONSTANTS.API_ENDPOINTS.REGISTER}`, registerData)
       .pipe(catchError(this.handleError));
   }
 
-  /**
-   * Authenticate user with email and password
-   * @param email User email
-   * @param password User password
-   * @returns Observable with login response
-   */
   login(email: string, password: string): Observable<AuthResponse> {
     const loginRequest: LoginRequest = { email, password };
 
@@ -96,25 +100,6 @@ export class AuthService {
       );
   }
 
-  /**
-   * Store authentication data in localStorage
-   * @param response Auth response containing tokens
-   */
-  private storeAuthData(response: AuthResponse): void {
-    localStorage.setItem(AUTH_CONSTANTS.STORAGE_KEYS.TOKEN, response.token);
-    localStorage.setItem(AUTH_CONSTANTS.STORAGE_KEYS.REFRESH_TOKEN, response.refreshToken);
-
-    const userData = {
-      userId: response.userId,
-      roles: response.roles,
-      expiration: response.expiration,
-    };
-    localStorage.setItem(AUTH_CONSTANTS.STORAGE_KEYS.USER_DATA, JSON.stringify(userData));
-  }
-
-  /**
-   * Log the user out and clear stored auth data
-   */
   logout(): void {
     // Optionally call logout endpoint if server needs to invalidate tokens
     // this.http.post(`${this.apiUrl}${AUTH_CONSTANTS.API_ENDPOINTS.LOGOUT}`, {}).subscribe();
@@ -126,10 +111,21 @@ export class AuthService {
     this.router.navigate(['/auth/login']);
   }
 
-  /**
-   * Refresh the access token using the stored refresh token
-   * @returns Observable with new tokens
-   */
+  sendForgotPasswordEmail(email: string): Observable<any> {
+    return this.http
+      .post<any>(`${this.apiUrl}/auth/ForgotPassword`, { email })
+      .pipe(catchError(this.handleError));
+  }
+
+  resetPassword(email: string, token: string, newPassword: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/auth/ResetPassword`, {
+      email,
+      token,
+      newPassword,
+    });
+  }
+
+  // Token management
   refreshToken(): Observable<TokenResponse> {
     const refreshToken = localStorage.getItem(AUTH_CONSTANTS.STORAGE_KEYS.REFRESH_TOKEN);
     const refreshRequest: RefreshTokenRequest = { refreshToken: refreshToken || '' };
@@ -147,31 +143,19 @@ export class AuthService {
       );
   }
 
-  /**
-   * Get the current auth token
-   * @returns The stored token or null if not authenticated
-   */
-  getToken(): string | null {
-    return localStorage.getItem(AUTH_CONSTANTS.STORAGE_KEYS.TOKEN);
+  private storeAuthData(response: AuthResponse): void {
+    localStorage.setItem(AUTH_CONSTANTS.STORAGE_KEYS.TOKEN, response.token);
+    localStorage.setItem(AUTH_CONSTANTS.STORAGE_KEYS.REFRESH_TOKEN, response.refreshToken);
+
+    const userData = {
+      userId: response.userId,
+      roles: response.roles,
+      expiration: response.expiration,
+    };
+    localStorage.setItem(AUTH_CONSTANTS.STORAGE_KEYS.USER_DATA, JSON.stringify(userData));
   }
 
-  /**
-   * Check if the user is authenticated
-   * @returns Boolean indicating authentication status
-   */
-  isAuthenticated(): boolean {
-    return this.hasToken();
-  }
-
-  /**
-   * Get user data from local storage
-   * @returns User data object or null if not available
-   */
-  getUserData(): { userId: string; email: string; expiration: string } | null {
-    const userData = localStorage.getItem(AUTH_CONSTANTS.STORAGE_KEYS.USER_DATA);
-    return userData ? JSON.parse(userData) : null;
-  }
-
+  // Email confirmation
   confirmEmail(
     request: EmailConfirmationRequest,
   ): Observable<{ message: string; success: boolean }> {
@@ -190,11 +174,7 @@ export class AuthService {
     );
   }
 
-  /**
-   * Handle HTTP errors
-   * @param error HttpErrorResponse object
-   * @returns Observable that throws an error
-   */
+  // Error handling
   private handleError(error: HttpErrorResponse) {
     let errorMessage = 'An unknown error occurred';
 

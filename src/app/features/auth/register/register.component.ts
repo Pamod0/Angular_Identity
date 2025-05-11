@@ -10,6 +10,10 @@ import {
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { catchError, finalize, of, Subscription, tap } from 'rxjs';
+
+import { AuthService, RegisterRequest } from '../../../core/services/auth.service';
+import { AuthErrorResponse } from '../../../core/models/auth.model';
 
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -17,9 +21,6 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatIconModule } from '@angular/material/icon';
-import { catchError, finalize, of, Subscription, tap } from 'rxjs';
-import { AuthService, RegisterRequest } from '../../../core/services/auth.service';
-import { AuthErrorResponse } from '../../../core/models/auth.model';
 
 const VALIDATION = {
   PASSWORD_MIN_LENGTH: 6,

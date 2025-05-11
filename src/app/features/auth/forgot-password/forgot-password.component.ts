@@ -62,11 +62,36 @@ export class ForgotPasswordComponent {
   createForm() {
     this.authForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(VALIDATION.PASSWORD_MIN_LENGTH)]],
     });
   }
 
-  onSubmit() {}
+  onSubmit() {
+    if (this.authForm.invalid) {
+      this.authForm.markAllAsTouched(); // Mark all fields as touched to trigger validations
+      return;
+    }
+
+    this.isLoading = true;
+
+    const email = this.authForm.value.email;
+
+    this.authService.sendForgotPasswordEmail(email).subscribe({
+      next: (response) => {
+        this.snackBar.open(`${response.message}`, 'Close', {
+          duration: VALIDATION.SNACKBAR_DURATION,
+        });
+      },
+      error: (error) => {
+        this.snackBar.open(error, 'Close', {
+          duration: VALIDATION.SNACKBAR_DURATION,
+        });
+        this.isLoading = false;
+      },
+      complete: () => {
+        this.isLoading = false;
+      },
+    });
+  }
 
   getEmailErrorMessage() {
     const email = this.authForm.get('email');
