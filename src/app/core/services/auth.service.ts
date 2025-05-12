@@ -176,26 +176,29 @@ export class AuthService {
 
   // Error handling
   private handleError(error: HttpErrorResponse) {
+    console.log('An error occurred:', error);
     let errorMessage = 'An unknown error occurred';
 
     if (error.error instanceof ErrorEvent) {
       // Client-side error
       errorMessage = `Error: ${error.error.message}`;
+      console.log('Client-side error:', errorMessage);
     } else {
       // Server-side error
       if (error.error && typeof error.error === 'object') {
         if (error.error.errors) {
-          // Handle validation errors from ASP.NET Core Identity
-          const validationErrors = error.error.errors;
-          const errorMessages: string[] = [];
-
-          for (const key in validationErrors) {
-            if (Object.prototype.hasOwnProperty.call(validationErrors, key)) {
-              errorMessages.push(...validationErrors[key]);
-            }
+          // Case 1: Array of strings
+          if (Array.isArray(error.error.errors)) {
+            errorMessage = error.error.errors.join(' ');
           }
-
-          if (errorMessages.length > 0) {
+          // Case 2: Object with field-specific errors (e.g., { "Password": ["Too short"] })
+          else {
+            const errorMessages: string[] = [];
+            for (const key in error.error.errors) {
+              if (error.error.errors[key]?.length) {
+                errorMessages.push(...error.error.errors[key]);
+              }
+            }
             errorMessage = errorMessages.join(' ');
           }
         } else if (error.error.message) {
