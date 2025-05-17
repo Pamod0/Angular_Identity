@@ -1,5 +1,7 @@
-import { Component, ViewChild, HostListener } from '@angular/core';
+import { Component, ViewChild, HostListener, inject } from '@angular/core';
 import { RouterOutlet, RouterLink } from '@angular/router';
+
+import { AuthService } from '../../core/services/auth.service';
 
 import { MatIconModule } from '@angular/material/icon';
 import { MatSidenavModule } from '@angular/material/sidenav';
@@ -15,7 +17,7 @@ import { CommonModule } from '@angular/common';
 import { MatRippleModule } from '@angular/material/core';
 
 @Component({
-  selector: 'app-admin-dashboard',
+  selector: 'app-dashboard',
   imports: [
     RouterOutlet,
     RouterLink,
@@ -32,23 +34,25 @@ import { MatRippleModule } from '@angular/material/core';
     CommonModule,
     MatRippleModule,
   ],
-  templateUrl: './admin-dashboard.component.html',
-  styleUrl: './admin-dashboard.component.scss',
+  templateUrl: './dashboard.component.html',
+  styleUrl: './dashboard.component.scss',
 })
-export class AdminDashboardComponent {
+export class DashboardComponent {
   @ViewChild('sidenav') sidenav!: MatSidenav;
   isMobile = false;
   isDarkTheme = false;
   isCollapsed = false;
 
   menuItems = [
-    { icon: 'dashboard', label: 'Dashboard', route: '/dashboard', notifications: 0 },
+    { icon: 'dashboard', label: 'Dashboard', route: '/', notifications: 0 },
     { icon: 'bar_chart', label: 'Analytics', route: '/analytics', notifications: 2 },
-    { icon: 'people', label: 'Users', route: '/users', notifications: 0 },
+    { icon: 'people', label: 'Users', route: '/admin/users', notifications: 0 },
     { icon: 'shopping_cart', label: 'Orders', route: '/orders', notifications: 5 },
     { icon: 'inventory', label: 'Products', route: '/products', notifications: 0 },
     { icon: 'settings', label: 'Settings', route: '/settings', notifications: 0 },
   ];
+
+  private authService = inject(AuthService);
 
   constructor() {
     this.checkScreenSize();
@@ -99,5 +103,9 @@ export class AdminDashboardComponent {
 
   getTotalNotifications(): number {
     return this.menuItems.reduce((sum, item) => sum + item.notifications, 0);
+  }
+
+  logOut(): void {
+    this.authService.logout();
   }
 }
