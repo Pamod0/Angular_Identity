@@ -1,9 +1,10 @@
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { environment } from '../../../../environments/environment';
-import { catchError, throwError } from 'rxjs';
+import { catchError, Observable, throwError } from 'rxjs';
 import { User } from '../users/user.model';
 import { PagedResponse } from '../../../core/models/paged-response.model';
+import { PagedRequest } from '../../../core/models/paged-request.model';
 
 @Injectable({
   providedIn: 'root',
@@ -14,9 +15,21 @@ export class UserService {
 
   private http = inject(HttpClient);
 
-  getAll() {
+  getAll(request: PagedRequest): Observable<PagedResponse<User[]>> {
+    let params = new HttpParams()
+      .set('page', request.page.toString())
+      .set('pageSize', request.pageSize.toString());
+
+    if (request.searchText) {
+      params = params.set('searchText', request.searchText);
+    }
+
+    if (request.exactMatch !== undefined) {
+      params = params.set('exactMatch', request.exactMatch.toString());
+    }
+
     return this.http
-      .get<PagedResponse<User[]>>(`${this._apirl}/${this._subUrl}/getAll`)
+      .get<PagedResponse<User[]>>(`${this._apirl}/${this._subUrl}/getAll`, { params })
       .pipe(catchError(this.handleError));
   }
 
