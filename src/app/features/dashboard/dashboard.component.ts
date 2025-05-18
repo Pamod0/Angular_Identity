@@ -45,9 +45,9 @@ export class DashboardComponent {
 
   menuItems = [
     { icon: 'dashboard', label: 'Dashboard', route: '/', notifications: 0 },
-    { icon: 'bar_chart', label: 'Analytics', route: '/analytics', notifications: 2 },
+    { icon: 'bar_chart', label: 'Analytics', route: '/analytics', notifications: 0 },
     { icon: 'people', label: 'Users', route: '/admin/users', notifications: 0 },
-    { icon: 'shopping_cart', label: 'Orders', route: '/orders', notifications: 5 },
+    { icon: 'shopping_cart', label: 'Orders', route: '/orders', notifications: 0 },
     { icon: 'inventory', label: 'Products', route: '/products', notifications: 0 },
     { icon: 'settings', label: 'Settings', route: '/settings', notifications: 0 },
   ];
